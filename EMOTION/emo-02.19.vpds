@@ -1,0 +1,164 @@
+{
+    "Attributes": {
+        "Type": "VPixxSimulatorProject"
+    },
+    "Properties": [
+        {
+            "Attributes": {
+                "Name": "Project Name",
+                "Type": "Property<string>"
+            },
+            "Value": "LabMaestro Simulator Project"
+        },
+        {
+            "Attributes": {
+                "Name": "Device Name",
+                "Type": "Property<string>"
+            },
+            "Value": ""
+        },
+        {
+            "Attributes": {
+                "Name": "Filename",
+                "Type": "Property<string>"
+            },
+            "Value": "Project Filename"
+        },
+        {
+            "Attributes": {
+                "Name": "Hub Type",
+                "Type": "Property<int32_t>"
+            },
+            "Value": "3"
+        },
+        {
+            "Attributes": {
+                "Name": "Digital Loopback Enabled",
+                "Type": "Property<bool>"
+            },
+            "Value": "0"
+        },
+        {
+            "Attributes": {
+                "Name": "VSync Refresh Rate",
+                "Type": "Property<int32_t>"
+            },
+            "Value": "30"
+        },
+        {
+            "Attributes": {
+                "Name": "IOConfig",
+                "Type": "Property<IOConfigDynamicData>"
+            },
+            "Value": {
+                "Attributes": {
+                    "Type": "IOConfigDynamicData"
+                },
+                "Properties": [
+                    {
+                        "Attributes": {
+                            "Name": "DeviceMappings",
+                            "Type": "Property<Framework::vplist<class DeviceMappingDynamicData>>"
+                        },
+                        "Value": {
+                            "Attributes": {
+                                "Type": "Framework::vplist<class DeviceMappingDynamicData>"
+                            },
+                            "_Items": [
+                                {
+                                    "Attributes": {
+                                        "Type": "DeviceMappingDynamicData"
+                                    },
+                                    "Properties": [
+                                        {
+                                            "Attributes": {
+                                                "Name": "DeviceID",
+                                                "Type": "Property<int32_t>"
+                                            },
+                                            "Value": "0"
+                                        },
+                                        {
+                                            "Attributes": {
+                                                "Name": "PortID",
+                                                "Type": "Property<int32_t>"
+                                            },
+                                            "Value": "0"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "Attributes": {
+                "Name": "PixelModeDisplayIndex",
+                "Type": "Property<int32_t>"
+            },
+            "Value": "0"
+        },
+        {
+            "Attributes": {
+                "Name": "DefaultPixelMode",
+                "Type": "Property<int32_t>"
+            },
+            "Value": "0"
+        },
+        {
+            "Attributes": {
+                "Name": "Chart",
+                "Type": "Property<ChartDynamicData>"
+            },
+            "Value": {
+                "Attributes": {
+                    "Type": "ChartDynamicData"
+                },
+                "Properties": [
+                    {
+                        "Attributes": {
+                            "Name": "ActiveDinChartSignals",
+                            "Type": "Property<vplist<int32_t>>"
+                        },
+                        "Value": {
+                            "Attributes": {
+                                "Type": "vplist<int32_t>"
+                            }
+                        }
+                    },
+                    {
+                        "Attributes": {
+                            "Name": "ActiveDoutChartSignals",
+                            "Type": "Property<vplist<int32_t>>"
+                        },
+                        "Value": {
+                            "Attributes": {
+                                "Type": "vplist<int32_t>"
+                            }
+                        }
+                    },
+                    {
+                        "Attributes": {
+                            "Name": "ActiveAnalogChartSignals",
+                            "Type": "Property<vplist<int32_t>>"
+                        },
+                        "Value": {
+                            "Attributes": {
+                                "Type": "vplist<int32_t>"
+                            }
+                        }
+                    },
+                    {
+                        "Attributes": {
+                            "Name": "IsVsyncChartSignalActive",
+                            "Type": "Property<bool>"
+                        },
+                        "Value": "0"
+                    }
+                ]
+            }
+        }
+    ]
+}
+

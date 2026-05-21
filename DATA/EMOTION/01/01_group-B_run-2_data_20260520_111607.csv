@@ -1,0 +1,6 @@
+run,trial_index,face,face_onset_psy,face_onset_dev,correct_key,response_key,is_resp_corr,rt_psy,rt_dev
+2,1,MSA,7.805124958002125,609.972073958,red,NaN,0,NaN,NaN
+2,2,WNB,9.321600499999477,611.483000166,green,NaN,0,NaN,NaN
+2,3,MAB,11.171619749999081,613.332902291,red,NaN,0,NaN,NaN
+2,4,WAA,12.755057292000856,614.916770291,green,NaN,0,NaN,NaN
+2,5,WHA,14.672219916996255,616.8351447910001,green,NaN,0,NaN,NaN
