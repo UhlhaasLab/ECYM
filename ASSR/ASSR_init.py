@@ -305,7 +305,9 @@ def preload_stimuli(win, stimulipath, BASE_DIR, vpdevice, MSR, SUB, dB_SL):
 
         # ======= VISUAL
         fix_dot = visual.Circle(win, radius=fixation_angle/2, fillColor="black", lineColor="black", pos=(0, 0), units="deg")
-        arrow_vertices = [(-0.5, 0.8), (0.5, 0.0), (-0.5, -0.8)]
+        # arrow_vertices = [(-0.5, 0.8), (0.5, 0.0), (-0.5, -0.8)] # ADAPT to make it even more central.
+        arrow_vertices = [(-0.333, 0.8), (0.667, 0.0), (-0.333, -0.8)]  # centroid at (0,0)
+        
         arrow_stim = visual.ShapeStim(win, vertices=arrow_vertices, closeShape=True, fillColor="black", lineColor="black")
         
         return {"Audio": Audio, "fix_dot": fix_dot, "arrow_stim": arrow_stim}

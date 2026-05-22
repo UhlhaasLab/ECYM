@@ -1,5 +1,7 @@
 """ written by Johanna Prugger.
 
+- >< arrows should be on "top" of fixation dot
+
 - for now it sends triggers when correct response. can take out right? as i will have new button box code.
 
 DARIO:
