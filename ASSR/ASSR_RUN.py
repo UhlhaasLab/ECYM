@@ -50,6 +50,7 @@ def run_ASSR(device, buttonCodes, myLog, monitor, MSR, SUB, CONDITION, SUB_DIR):
     win.mouseVisible = False
     mouse = event.Mouse(visible=False)
 
+    # -------------------- TIMING SETUP --------------------
     # number of frames = duration in sec * refresh rate in Hz (frames per second)
     monitor_rr = monitor_settings["refresh_rate"] # 120 in MSR.     60 on laptop
     frameDur = 1.0 / monitor_rr # 0.008333s, 8.33ms in MSR.     0.016666s, 16.67ms on laptop.       1 frame last 8.33ms, then next..
@@ -68,7 +69,7 @@ def run_ASSR(device, buttonCodes, myLog, monitor, MSR, SUB, CONDITION, SUB_DIR):
     instr = txt_dict["txt_intro_PAS"] if CONDITION == "PAS" else txt_dict["txt_intro_ATT"]
     txt_finished = txt_dict["txt_finished"]
 
-    stim = preload_stimuli(win, STIM_DIR, BASE_DIR, device, MSR, SUB, dB_SL=55) # adapt. check db_sl
+    stim = preload_stimuli(win, STIM_DIR, BASE_DIR, device, MSR, SUB, dB_SL=55) # adapt. check db_sl !!!!!!!!!!!!!
 
     # audio
     audio_reg = stim["Audio"]
@@ -87,7 +88,7 @@ def run_ASSR(device, buttonCodes, myLog, monitor, MSR, SUB, CONDITION, SUB_DIR):
         return trials
 
     trials = load_trials()
-    trials = trials[:5]
+    trials = trials[:5] # ADAPT to full lenght 
 
     # ---------------- PRECOMPUTE ONCE ----------------
     arrow_frames = round(ARROW_DUR / frameDur)
@@ -158,7 +159,7 @@ def run_ASSR(device, buttonCodes, myLog, monitor, MSR, SUB, CONDITION, SUB_DIR):
 
     # -------------------- LOOP --------------------
     global_frame = 0
-    # last_onset_dev = None # just for debug
+    # last_onset_dev = None # just for timing debug
 
     for trial in trial_specs:
         
