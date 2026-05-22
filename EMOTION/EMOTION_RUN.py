@@ -1,21 +1,12 @@
-"""
-TO DO
-
-- MMN/ASSR: SHOULD I IMPLEMENT THIS? Assign NaN if no button is pressed
+""" TO DO
 
 
-- response times are not logging!!!!!!
+- adapt trigger sending for responses as we have new button code....?
+
 
 
 not urgent:
-- man angry face? wenn er die nase rümpft isch es verstellt. auch tipa die erste isch awian verstellt
-
-change before MSR:
-init:
-    - msr 1
-RUN
-    - fullscreen
-    - comment in instructions etcss
+- man angry face? wenn er die nase rümpft ist bissi verstellt. auch frau die erste isch awian verstellt
 """
 
 import sys
@@ -161,19 +152,19 @@ def run_EMOTION(device, buttonCodes, myLog, monitor, MSR, SUB, RUN, GROUP, SUB_D
         draw_pixel(win, trigger_to_RGB(TRIG_START))
         win.flip()
 
-    # # debug
-    # print(f"TRIG START ON {TRIG_START}, RGB: {trigger_to_RGB(TRIG_START)}")
-    # print_trigger_info(device)
-    # print("")
+    # debug
+    print(f"TRIG START ON {TRIG_START}, RGB: {trigger_to_RGB(TRIG_START)}")
+    print_trigger_info(device)
+    print("")
 
     for f in range(round(1.0 / frameDur) - TRIG_FRAMES):
         fix.draw()
         win.flip()
 
-    # # debug
-    # print(f"gray")
-    # print_trigger_info(device)
-    # print("")
+    # debug
+    print(f"gray")
+    print_trigger_info(device)
+    print("")
 
     # -------------------- MAIN LOOP --------------------
     for trial_data in trials:
@@ -239,11 +230,11 @@ def run_EMOTION(device, buttonCodes, myLog, monitor, MSR, SUB, RUN, GROUP, SUB_D
                 face_onset_dev = flip_marks.get("t_face_dev")
                 face_onset_psy = flip_marks.get("t_face_psy")
 
-            # debug once, after pixel settling, to check trigger values:
-            if frameN == TRIG_FRAMES - 1:
-                print(f"trig_to_send: {face_trig}, RGB: {trigger_to_RGB(face_trig)}")
-                print_trigger_info(device)
-                print("")
+            # # debug once, after pixel settling, to check trigger values:
+            # if frameN == TRIG_FRAMES - 1:
+            #     print(f"trig_to_send: {face_trig}, RGB: {trigger_to_RGB(face_trig)}")
+            #     print_trigger_info(device)
+            #     print("")
                 
                 
             # -------- 3. RESPONSE COLLECTION --------
@@ -267,6 +258,7 @@ def run_EMOTION(device, buttonCodes, myLog, monitor, MSR, SUB, RUN, GROUP, SUB_D
                         rt_psy = t_psy_pressed - face_onset_psy
 
                         # assign response trigger
+                        # ADAPT: IS THIS NEEDED IF NEW BUTTON BOX TRIGGERING
                         if response_key == "red":
                             resp_trigger_value = TRIG_RESP_right
                             trigger_frames_left = TRIG_FRAMES

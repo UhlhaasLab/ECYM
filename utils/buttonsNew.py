@@ -25,7 +25,7 @@ def stopButtons(startAndStopButtons):
 
 
 
-# i changed this button press function!!!
+# i changed this button press function
 def read_button_press(device, button_log):
     """
     Read button presses from VPixx device.
@@ -49,6 +49,7 @@ def read_button_press(device, button_log):
     except Exception as e:
         print(f"✗ Error reading button: {e}")
     return None, None
+
 # here the new version, need to test it in headscan:
 def read_button_press_old(device, button_log):
     if device is None:
@@ -142,7 +143,6 @@ def enable_din_dout_passthrough_pixel_mode():
         dp.DPxWriteRam(buffer_address, waveform)
 
     
-
     dp.DPxSetDoutBuff(dout_buffer_base_addr + 4096 * 0, trigger_length * 2)
     dp.DPxSetDoutSched(0, 1, 'video', trigger_length + 1)
 

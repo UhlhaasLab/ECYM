@@ -1,0 +1,9 @@
+- change all buttons to buttonsNew code
+
+-> set config.json (eg button codes: # Button codes in MSR
+    BUTTON_CODES_ALL = { 65528: 'blue', 65522: 'yellow', 65521: 'red', 65524: 'green', 65520: 'button release' }
+
+
+
+- do we need eyetracker?
+

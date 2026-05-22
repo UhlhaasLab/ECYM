@@ -1,19 +1,12 @@
 """ written by Johanna Prugger.
 TINEKE:
 - for now it sends triggers when correct response. can take out right?
-- should i reset the psychopy clock at beginning?
 
 DARIO:
 - updateReg cache use after trigger pres???
 
 end:
 - check if trial seq is correct
-
-
-HPI settings check if correct before start Recording.
-    LOCALIZE after every run.
-    
-LabMaestro settings OMCB: eyetracker only set there, else in script.
 
 """
 
@@ -119,7 +112,6 @@ def run_ASSR(device, buttonCodes, myLog, monitor, MSR, SUB, CONDITION, SUB_DIR):
             "trigger": trig
         })
 
-    """
     # -------------------- INSTRUCTIONS --------------------
     instr.draw()
     win.flip()
@@ -133,14 +125,14 @@ def run_ASSR(device, buttonCodes, myLog, monitor, MSR, SUB, CONDITION, SUB_DIR):
             break
         if check_abort(): 
             core.quit()
-    """
-    # # -------------------- COUNTDOWN --------------------
-    # for number in ["3", "2", "1"]:
-    #     countdown_text = visual.TextStim(win, text=number, height=3, color='black')
-    #     countdown_text.draw()
-    #     win.flip()
-    #     core.wait(1.0) # Show each number for 1 second
-    # print(f"Starting subject {SUB}, ASSR CONDITION {CONDITION}...")
+    
+    # -------------------- COUNTDOWN --------------------
+    for number in ["3", "2", "1"]:
+        countdown_text = visual.TextStim(win, text=number, height=3, color='black')
+        countdown_text.draw()
+        win.flip()
+        core.wait(1.0) # Show each number for 1 second
+    print(f"Starting subject {SUB}, ASSR CONDITION {CONDITION}...")
 
     # -------------------- INITIAL FIXATION --------------------
     for f in range(TRIG_FRAMES):
@@ -164,7 +156,7 @@ def run_ASSR(device, buttonCodes, myLog, monitor, MSR, SUB, CONDITION, SUB_DIR):
 
     # -------------------- LOOP --------------------
     global_frame = 0
-    last_onset_dev = None # just for debug
+    # last_onset_dev = None # just for debug
 
     for trial in trial_specs:
         
@@ -218,7 +210,7 @@ def run_ASSR(device, buttonCodes, myLog, monitor, MSR, SUB, CONDITION, SUB_DIR):
                 # win.callOnFlip(audio_reg.play) # psychopy
                 
                 win.callOnFlip(lambda: device.audio.startSchedule()) # audio for device, alternative syntax
-                win.callOnFlip(lambda: device.updateRegisterCache())
+                win.callOnFlip(lambda: device.updateRegisterCache()) # check with dario if this is needed
                 # win.callOnFlip(lambda: device.updateRegCacheAfterVideoSync()) # make sure audio starts right after video sync
             
                 win.callOnFlip(lambda: flip_marks.update({
@@ -291,11 +283,11 @@ def run_ASSR(device, buttonCodes, myLog, monitor, MSR, SUB, CONDITION, SUB_DIR):
         ])
         log_f.flush()
         
-        # just for debug:
-        if last_onset_dev is not None:
-            print(f"Trial {trial['trial_index']} SOA: {sound_onset_dev - last_onset_dev: .4f}s")
-        last_onset_dev = sound_onset_dev
-        # just for debug end
+        # # just for debug:
+        # if last_onset_dev is not None:
+        #     print(f"Trial {trial['trial_index']} SOA: {sound_onset_dev - last_onset_dev: .4f}s")
+        # last_onset_dev = sound_onset_dev
+        # # just for debug end
             
             
     # wait one soa
