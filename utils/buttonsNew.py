@@ -32,7 +32,7 @@ def read_button_press(device, button_log):
     Returns:
         tuple: (button_name, timestamp) or (None, None) if no button pressed
     """
-    BUTTON_CODES_ALL = { 65528: 'blue', 65522: 'yellow', 65521: 'red', 65524: 'green', 65520: 'button release' }
+    BUTTON_CODES_ALL = { 65528: 'blue', 65522: 'yellow', 65521: 'red', 65524: 'green', 65520: 'button release' } # ADAPT
 
     if device is None:
         return None, None

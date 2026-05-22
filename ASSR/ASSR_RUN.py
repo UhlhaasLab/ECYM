@@ -1,9 +1,9 @@
 """ written by Johanna Prugger.
-TINEKE:
-- for now it sends triggers when correct response. can take out right?
+
+- for now it sends triggers when correct response. can take out right? as i will have new button box code.
 
 DARIO:
-- updateReg cache use after trigger pres???
+- updateReg cache use after trigger pres??? -> need to make it so, that it doesnt take up too much time with the update
 
 end:
 - check if trial seq is correct
