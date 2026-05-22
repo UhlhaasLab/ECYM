@@ -22,7 +22,7 @@ from ASSR.ASSR_init import (BASE_DIR, STIM_DIR, SOA, ARROW_DUR,
                         preload_stimuli, preload_txt)
 
 from utils.pixel_mode           import trigger_to_RGB, draw_pixel, print_trigger_info
-from utils.buttonsNew           import read_button_press, flush_button_buffer, cleanup_and_exit, read_button_press_fast, enable_din_dout_passthrough_pixel_mode
+from utils.buttonsNew           import read_button_press, flush_button_buffer, cleanup_and_exit, read_button_press_fast
 from utils.escape_cleanup_abort import check_abort, cleanup
 
 

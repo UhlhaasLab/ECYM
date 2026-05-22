@@ -25,6 +25,7 @@ from EMOTION.EMOTION_init import (# triggers
 
 from utils.pixel_mode           import trigger_to_RGB, draw_pixel, print_trigger_info
 from utils.buttons              import collect_response, flush_buttons
+from utils.buttonsNew           import read_button_press, flush_button_buffer, cleanup_and_exit, read_button_press_fast
 from utils.escape_cleanup_abort import check_abort, cleanup
 
 
@@ -58,15 +59,15 @@ def run_EMOTION(device, buttonCodes, myLog, monitor, MSR, SUB, RUN, GROUP, SUB_D
     TRIG_FRAMES = 2 # pixel should show for 2 frames
 
     """
-    Face:            0 → 0.25 s
-    Fixation:        0.25 → jittered 1.25 - 1.75
+    Face:            0 → 0.10 s
+    Fixation:        0.10 → jittered 1.25 - 1.75
     Response window: 0.2 → 1.0 s
     """
 
-    face_dur = 0.250
+    face_dur = 0.100  # before it was 0.250
     face_frames = int(round(face_dur / frameDur))
 
-    resp_open_s  = 0.200
+    resp_open_s  = 0.200 # also change?
     resp_close_s = 1.000
 
     # -------------------- LOGGING SETUP --------------------
@@ -130,8 +131,10 @@ def run_EMOTION(device, buttonCodes, myLog, monitor, MSR, SUB, RUN, GROUP, SUB_D
     # device.updateRegisterCache() # this needed here?
 
     flush_buttons(device, myLog)
+    # ADAPT use new button code!!!!!!!!!!
     while True:
         button, _ = collect_response(device, myLog, buttonCodes)
+        # ADAPT use new button code!!!!!!!!!!
         if button in ["red", "green"]:
         #if event.getKeys(keyList=['r','g','b']): # for keyboard testing: wait for any key press to start
             break
@@ -170,7 +173,7 @@ def run_EMOTION(device, buttonCodes, myLog, monitor, MSR, SUB, RUN, GROUP, SUB_D
     for trial_data in trials:
         check_abort()
             
-        fix_dur = random.uniform(1.25, 1.75)
+        fix_dur = random.uniform(1.25, 1.75)                                # ADAPT?????
         fix_frames  = int(round(fix_dur / frameDur))
         total_frames = face_frames + fix_frames
 
@@ -193,7 +196,8 @@ def run_EMOTION(device, buttonCodes, myLog, monitor, MSR, SUB, RUN, GROUP, SUB_D
         correct_key = correct_map[trial_data["face"][0]]  # 'W' or 'M'
 
         # flush BEFORE trial starts
-        flush_buttons(device, myLog)
+        flush_buttons(device, myLog) # does this take time?
+        # ADAPT use new button code!!!!!!!!!!
 
         # ============= FRAME LOOP =============
         # This inner loop draws every frame for one complete trial (face + fixation)    
@@ -248,6 +252,7 @@ def run_EMOTION(device, buttonCodes, myLog, monitor, MSR, SUB, RUN, GROUP, SUB_D
                 # within response window (200–1000 ms)
                 if face_onset_dev + resp_open_s <= t_dev_now <= face_onset_dev + resp_close_s:
                     button_pressed, t_dev_pressed = collect_response(device, myLog, buttonCodes)
+                    # ADAPT use new button code!!!!!!!!!!
                     t_psy_pressed = psychopy_clock.getTime()
 
                     if button_pressed is not None:
