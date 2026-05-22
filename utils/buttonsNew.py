@@ -2,14 +2,14 @@ from psychopy import  core
 from pypixxlib import _libdpx as dp
 import numpy as np
 
-MSR = 0
+MRS = 1
 
-if MSR == 0:
+if MRS == 0:
     # Working codes in Lab maestro Simulator
     BUTTON_CODES_ALL = {65527:'blue', 65533:'yellow', 65534:'red', 65531:'green', 65519:'white', 65535:'button release'}
     exitButton  = 'white'
 
-if MSR == 1:
+if MRS == 1:
     # Button codes in MSR
     BUTTON_CODES_ALL = { 65528: 'blue', 65522: 'yellow', 65521: 'red', 65524: 'green', 65520: 'button release' }
 
@@ -25,7 +25,7 @@ def stopButtons(startAndStopButtons):
 
 
 
-# i changed this button press function
+# use this button press function
 def read_button_press(device, button_log):
     """
     Read button presses from VPixx device.
@@ -43,12 +43,17 @@ def read_button_press(device, button_log):
             for timestamp, code in event_list:
                 if code in BUTTON_CODES_ALL:
                     button_name = BUTTON_CODES_ALL[code] 
-                    # # Only return green or red button presses
+                    # # Only return green or red (blue..) button presses
                     if button_name in ("red", "green","blue"):
                         return button_name, timestamp
     except Exception as e:
-        print(f"✗ Error reading button: {e}")
+        print(f"Error reading button: {e}")
     return None, None
+
+
+
+
+
 
 # here the new version, need to test it in headscan:
 def read_button_press_old(device, button_log):
@@ -143,6 +148,7 @@ def enable_din_dout_passthrough_pixel_mode():
         dp.DPxWriteRam(buffer_address, waveform)
 
     
+
     dp.DPxSetDoutBuff(dout_buffer_base_addr + 4096 * 0, trigger_length * 2)
     dp.DPxSetDoutSched(0, 1, 'video', trigger_length + 1)
 
