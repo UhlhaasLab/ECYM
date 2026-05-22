@@ -23,7 +23,7 @@ from EMOTION.EMOTION_init import (# triggers
                          # preload
                          preload_stimuli, preload_txt)
 
-from utils.pixel_mode           import pixel_time, trigger_to_RGB, draw_pixel, print_trigger_info
+from utils.pixel_mode           import trigger_to_RGB, draw_pixel, print_trigger_info
 from utils.buttons              import collect_response, flush_buttons
 from utils.escape_cleanup_abort import check_abort, cleanup
 
