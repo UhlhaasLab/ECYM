@@ -3,10 +3,6 @@ TO DO
 
 - MMN/ASSR: SHOULD I IMPLEMENT THIS? Assign NaN if no button is pressed
 
-       
-- FACES FLICKER WHEN BUTTON PRESSED. WHY? BECAUSE I SHOW THE TRIGGER PIXEL FOR 2 FRAMES, BUT THE FACE IS ALSO SHOWN FOR 2 FRAMES. SO WHEN THE TRIGGER PIXEL APPEARS, IT REPLACES THE FACE PIXEL, CAUSING A FLICKER. TO FIX THIS, I CAN EITHER (the faces are a round ping which are only visible in the center of the screen - they do NOT overlap with the pixel which is shown in the top left corner, so i can show the trigger pixel without affecting the face presentation - why does it still flicker? maybe the face isn't shown while the pixel is shown 
-   - thus i want to show the face WITH the trigger pixel for the first 2 frames, and then show the face alone for the remaining frames. this way, the trigger pixel will not cause any flicker because it will be shown together with the face, and then removed after 2 frames while the face remains on screen for the full duration.
-
 
 - response times are not logging!!!!!!
 
@@ -151,33 +147,33 @@ def run_EMOTION(device, buttonCodes, myLog, monitor, MSR, SUB, RUN, GROUP, SUB_D
         if check_abort():
             core.quit()  
 
-    # # -------------------- COUNTDOWN --------------------
-    # for number in ["3", "2", "1"]:
-    #     countdown_text = visual.TextStim(win, text=number, height=3, color='black')
-    #     countdown_text.draw()
-    #     win.flip()
-    #     core.wait(1.0) # Show each number for 1 second
-    # print(f"Starting EMOTION Run {RUN}...")
+    # -------------------- COUNTDOWN --------------------
+    for number in ["3", "2", "1"]:
+        countdown_text = visual.TextStim(win, text=number, height=3, color='black')
+        countdown_text.draw()
+        win.flip()
+        core.wait(1.0) # Show each number for 1 second
+    print(f"Starting EMOTION Run {RUN}...")
 
-    # # -------------------- INITIAL FIXATION --------------------
-    # for f in range(TRIG_FRAMES):
-    #     fix.draw()
-    #     draw_pixel(win, trigger_to_RGB(TRIG_START))
-    #     win.flip()
+    # -------------------- INITIAL FIXATION --------------------
+    for f in range(TRIG_FRAMES):
+        fix.draw()
+        draw_pixel(win, trigger_to_RGB(TRIG_START))
+        win.flip()
 
-    # # # debug
-    # # print(f"TRIG START ON {TRIG_START}, RGB: {trigger_to_RGB(TRIG_START)}")
-    # # print_trigger_info(device)
-    # # print("")
+    # # debug
+    # print(f"TRIG START ON {TRIG_START}, RGB: {trigger_to_RGB(TRIG_START)}")
+    # print_trigger_info(device)
+    # print("")
 
-    # for f in range(round(1.0 / frameDur) - TRIG_FRAMES):
-    #     fix.draw()
-    #     win.flip()
+    for f in range(round(1.0 / frameDur) - TRIG_FRAMES):
+        fix.draw()
+        win.flip()
 
-    # # # debug
-    # # print(f"gray")
-    # # print_trigger_info(device)
-    # # print("")
+    # # debug
+    # print(f"gray")
+    # print_trigger_info(device)
+    # print("")
 
     # -------------------- MAIN LOOP --------------------
     for trial_data in trials:
