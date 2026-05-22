@@ -29,29 +29,16 @@ def button_box(config):
 
 ## MONITOR
 def stim_monitor(config):
-        
-    viewing_distance_cm = 40
-    monitor_width_cm    = 28.7
-    monitor_size_pix    = [1440, 900]
-    monitor_name        = "Laptop"
-    refresh_rate        = 60
-    screen_number       = 0
+
+    monitor_config = config["monitor"] 
 
     # Set Monitor
-    monitor = monitors.Monitor(monitor_name) 
-    monitor.setWidth(monitor_width_cm)  
-    monitor.setDistance(viewing_distance_cm)  
-    monitor.setSizePix(monitor_size_pix)
+    monitor = monitors.Monitor(monitor_config["monitor_name"]) 
+    monitor.setWidth(monitor_config["monitor_width_cm"])  
+    monitor.setDistance(monitor_config["viewing_distance_cm"])  
+    monitor.setSizePix(monitor_config["monitor_size_pix"])
     monitor.save()
 
 
     # Set monitor and return information
-    return {
-        "monitor_size_pix":     monitor_size_pix,
-        "monitor_name":         monitor_name,
-        "refresh_rate":         refresh_rate,
-        "viewing_distance_cm":  viewing_distance_cm,
-        "monitor_width_cm":     monitor_width_cm,
-        "screen_number":        screen_number
-    }
-
+    return monitor_config

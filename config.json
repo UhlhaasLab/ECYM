@@ -1,7 +1,7 @@
 { "monitor": {
     "viewing_distance_cm":  40,
     "monitor_width_cm":     28.7,
-    "monitor_size_pix":       [1440, 900],
+    "monitor_size_pix":     [1440, 900],
     "monitor_name":         "Laptop",
     "refresh_rate":         60,
     "screen_number":        1
