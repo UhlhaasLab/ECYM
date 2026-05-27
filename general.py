@@ -17,10 +17,11 @@ from utils.escape_cleanup_abort import cleanup
 from utils.help_funcs import input_to_continue, should_skip
 
 # --------------- INPUT ARGS TO START THE SCRIPT ----------------
+#sub and group required; MSR=1, ht=1 and start with first paradigm run 1 as default
 parser = argparse.ArgumentParser()
 parser.add_argument('--sub', type=str, required=True, help='Subject ID, e.g. 01')
 parser.add_argument('--group', type=str, required=True, help='A or B (EMOTION paradigm)')
-parser.add_argument('--msr', type=int, required=True, help='1 = MSR, 0 = no')
+parser.add_argument('--msr', type=int, default=1, help='1 = MSR, 0 = no')
 parser.add_argument('--start', type=str, default="ASSR" ,help='Paradigm to start with')
 parser.add_argument('--run', type=int, default=1, help='Run to start with')
 parser.add_argument('--ht', type=int, default=1, help='Measure hearing threshold: 1=yes, 0=no')
@@ -78,7 +79,6 @@ if HT:
     run_hearing_threshold(device, buttonCodes, myLog, SUB, SUB_DIR)
     print("Measure Hearing Threshold.")
     input_to_continue(paradigm["name"], 0, SUB)
-
 
 # ----------------------- RUN ASSR ----------------------------
 paradigm = next(p for p in paradigms if p["name"] == "ASSR")
