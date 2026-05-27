@@ -86,7 +86,7 @@ def flush_button_buffer(device, button_log):
 
     while True:
         # dp.DPxUpdateRegCache()
-        # device.updateRegisterCache()
+        device.updateRegisterCache()
         device.din.getDinLogStatus(button_log)
         n = button_log.get("newLogFrames", 0)
         

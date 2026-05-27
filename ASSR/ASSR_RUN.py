@@ -1,9 +1,5 @@
 """ written by Johanna Prugger.
 
-- >< arrows should be on "top" of fixation dot
-
-- for now it sends triggers when correct response. can take out right? as i will have new button box code.
-
 DARIO:
 - updateReg cache use after trigger pres??? -> need to make it so, that it doesnt take up too much time with the update
 
@@ -131,6 +127,7 @@ def run_ASSR(device, buttonCodes, myLog, monitor, MSR, SUB, CONDITION, SUB_DIR):
         if check_abort(): 
             core.quit()
     
+    """
     # -------------------- COUNTDOWN --------------------
     for number in ["3", "2", "1"]:
         countdown_text = visual.TextStim(win, text=number, height=3, color='black')
@@ -158,6 +155,7 @@ def run_ASSR(device, buttonCodes, myLog, monitor, MSR, SUB, CONDITION, SUB_DIR):
     print(f"gray")
     print_trigger_info(device)
     print("")
+    """
 
     # -------------------- LOOP --------------------
     global_frame = 0

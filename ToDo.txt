@@ -7,3 +7,7 @@
 
 - do we need eyetracker?
 
+
+just for johanna:
+PS C:\Users\annah\git\ECYM> cd C:\Users\annah\git\ECYM
+PS C:\Users\annah\git\ECYM> & "C:\Program Files\PsychoPy\python.exe" general.py --sub 02 --group A --msr 0 --ht 0 

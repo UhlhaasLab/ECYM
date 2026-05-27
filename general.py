@@ -1,5 +1,6 @@
 import sys
-sys.path.insert(0, '/Users/mathilde/Library/Python/3.10/lib/python/site-packages')
+# sys.path.insert(0, '/Users/mathilde/Library/Python/3.10/lib/python/site-packages')
+sys.path.insert(0, r"C:\Program Files\PsychoPy\Lib\site-packages")
 
 import os, json
 import importlib.util
@@ -35,7 +36,8 @@ START_RUN = args.run
 HT = args.ht
 
 # ------------------------ PARADIGMS ---------------------------
-paradigms = [{"name": "ASSR", "runs": [1]}, 
+paradigms = [{"name": "ASSR", "runs": ["PAS", "ATT"]},
+            # "name": "ASSR", "runs": [1, 2]}, 
              {"name": "EMOTION", "runs": [1, 2]}, #, 3, 4]}, 
              {"name": "MMN", "runs": [1, 2]}]
 

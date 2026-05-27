@@ -231,6 +231,13 @@ def assign_subject_gains(in_audio_reg, threshold_linear, per_tone_dBSL, master=1
     for name, info in in_audio_reg.items():
         peak            = info.get('peak', 1.0)
         this_dBSL       = per_tone_dBSL.get(name)
+
+        if this_dBSL is None:
+            raise ValueError(f"No dBSL defined for tone '{name}'")
+        
+        if peak is None:
+            raise ValueError("peak is None – audio not loaded or computed correctly")
+
         gain            = master * threshold_linear * (10.0 ** (this_dBSL / 20.0)) / max(peak, 1e-12)
         info['gain']    = float(max(0.0, min(1.0, gain)))  # clamp to [0,1]
     return in_audio_reg
@@ -276,7 +283,8 @@ def preload_stimuli(win, stimulipath, BASE_DIR, vpdevice, MSR, SUB, dB_SL):
 
         # ======= VISUAL
         fix_dot = visual.Circle(win, radius=fixation_angle/2, fillColor="black", lineColor="black", pos=(0, 0), units="deg")
-        arrow_vertices = [(-0.5, 0.8), (0.5, 0.0), (-0.5, -0.8)]
+        # arrow_vertices = [(-0.5, 0.8), (0.5, 0.0), (-0.5, -0.8)] # ADAPTED see below to make it even more central.
+        arrow_vertices = [(-0.333, 0.8), (0.667, 0.0), (-0.333, -0.8)]  # centroid at (0,0)
         arrow_stim = visual.ShapeStim(win, vertices=arrow_vertices, closeShape=True, fillColor="black", lineColor="black")
         
         return {"Audio": audio_reg, "fix_dot": fix_dot, "arrow_stim": arrow_stim}
@@ -305,7 +313,7 @@ def preload_stimuli(win, stimulipath, BASE_DIR, vpdevice, MSR, SUB, dB_SL):
 
         # ======= VISUAL
         fix_dot = visual.Circle(win, radius=fixation_angle/2, fillColor="black", lineColor="black", pos=(0, 0), units="deg")
-        # arrow_vertices = [(-0.5, 0.8), (0.5, 0.0), (-0.5, -0.8)] # ADAPT to make it even more central.
+        # arrow_vertices = [(-0.5, 0.8), (0.5, 0.0), (-0.5, -0.8)] # ADAPTED see below to make it even more central.
         arrow_vertices = [(-0.333, 0.8), (0.667, 0.0), (-0.333, -0.8)]  # centroid at (0,0)
         
         arrow_stim = visual.ShapeStim(win, vertices=arrow_vertices, closeShape=True, fillColor="black", lineColor="black")
