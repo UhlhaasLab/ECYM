@@ -268,8 +268,8 @@ def preload_stimuli(win, stimulipath, BASE_DIR, vpdevice, MSR, SUB, dB_SL):
         # load threshold & add gains
         BASE_DIR_up = Path(BASE_DIR).parent
         BASE_DIR_up2 = Path(BASE_DIR_up).parent
-        csv_path  = os.path.join(BASE_DIR_up, "DATA", "hearing_threshold_DATA", SUB)
-        thr_info  = load_threshold_csv(os.path.join(csv_path, "round_2_hearing_threshold_1000.csv"))
+        csv_path  = os.path.join(BASE_DIR_up, "DATA", "HEARING THRESHOLD", SUB, "round_2_hearing_threshold_1000.csv")
+        thr_info  = load_threshold_csv(csv_path)
         thr_lin   = thr_info["threshold_amplitude"]
         audio_reg = assign_subject_gains(audio_reg, threshold_linear=thr_lin, per_tone_dBSL={'clicktrain': dB_SL})  # ADAPTED FROM this/darios: ={'Aud_X': dB_SL, 'Aud_Y': dB_SL, 'Aud_FB': dB_SL-10})
         print(audio_reg)        
