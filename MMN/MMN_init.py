@@ -212,7 +212,7 @@ def preload_stimuli(win, stimulipath, subjectpath, vpdevice, current_run, MSR, S
 
         # load threshold & add gains
         BASE_DIR_up = Path(BASE_DIR).parent
-        csv_path  = os.path.join(BASE_DIR_up, "DATA", "hearing_threshold_DATA", SUB)
+        csv_path  = os.path.join(BASE_DIR_up, "DATA", "HEARING THRESHOLD", SUB, "round_2_hearing_threshold_1000.csv")
         thr_info  = load_threshold_csv(csv_path)
         thr_lin   = thr_info["threshold_amplitude"]
         audio_reg = assign_subject_gains(audio_reg, threshold_linear=thr_lin, per_tone_dBSL={'std_sound': dB_SL, 'ddev_sound': dB_SL + 40})
