@@ -6,6 +6,9 @@ DARIO:
 end:
 - check if trial seq is correct
 
+
+- PAS=1, ATT=2. kann man im ASSR_init iwie einfach am anfang 1="PAS", 2="ATT" machen?
+
 """
 
 import random, csv, time, os
@@ -20,7 +23,7 @@ from ASSR.ASSR_init import (BASE_DIR, STIM_DIR, SOA, ARROW_DUR,
                         preload_stimuli, preload_txt)
 
 from utils.pixel_mode           import trigger_to_RGB, draw_pixel, print_trigger_info
-from utils.buttonsNew           import read_button_press, flush_button_buffer, cleanup_and_exit, read_button_press_fast
+from utils.buttonsNew           import flush_button_buffer, cleanup_and_exit, read_button_press, read_button_press_fast, enable_din_dout_passthrough_pixel_mode
 from utils.escape_cleanup_abort import check_abort, cleanup
 
 
@@ -85,7 +88,7 @@ def run_ASSR(device, buttonCodes, myLog, monitor, MSR, SUB, CONDITION, SUB_DIR):
         return trials
 
     trials = load_trials()
-    trials = trials[:5] # ADAPT to full lenght 
+    trials = trials[:15] # ADAPT to full lenght 
 
     # ---------------- PRECOMPUTE ONCE ----------------
     arrow_frames = round(ARROW_DUR / frameDur)
@@ -127,7 +130,8 @@ def run_ASSR(device, buttonCodes, myLog, monitor, MSR, SUB, CONDITION, SUB_DIR):
         if check_abort(): 
             core.quit()
     
-    """
+    # enable_din_dout_passthrough_pixel_mode() # when do we aneable this best?
+    
     # -------------------- COUNTDOWN --------------------
     for number in ["3", "2", "1"]:
         countdown_text = visual.TextStim(win, text=number, height=3, color='black')
@@ -155,7 +159,7 @@ def run_ASSR(device, buttonCodes, myLog, monitor, MSR, SUB, CONDITION, SUB_DIR):
     print(f"gray")
     print_trigger_info(device)
     print("")
-    """
+    
 
     # -------------------- LOOP --------------------
     global_frame = 0
@@ -183,7 +187,8 @@ def run_ASSR(device, buttonCodes, myLog, monitor, MSR, SUB, CONDITION, SUB_DIR):
         sound_onset_psy = None
         #arrow_onset_dev = None
         #arrow_onset_psy = None
-            
+
+        
         infoaud_fb = audio_reg['clicktrain']
         device.audio.stopSchedule()
         device.audio.setAudioSchedule(0.0, infoaud_fb['fs'], infoaud_fb['n'], 'mono')
@@ -210,12 +215,13 @@ def run_ASSR(device, buttonCodes, myLog, monitor, MSR, SUB, CONDITION, SUB_DIR):
             # exact onset
             if frameN == 0:
                 
-                # win.callOnFlip(audio_reg.play) # psychopy
+                # infoaud_fb.play # adapt, needs to work. atm doesnt. psychopy
                 
                 win.callOnFlip(lambda: device.audio.startSchedule()) # audio for device, alternative syntax
                 win.callOnFlip(lambda: device.updateRegisterCache()) # check with dario if this is needed
                 # win.callOnFlip(lambda: device.updateRegCacheAfterVideoSync()) # make sure audio starts right after video sync
-            
+                # check/adapt if i need these regcache?!
+                
                 win.callOnFlip(lambda: flip_marks.update({
                     "dev": device.getTime(),
                     "psy": psychopy_clock.getTime()
@@ -247,7 +253,7 @@ def run_ASSR(device, buttonCodes, myLog, monitor, MSR, SUB, CONDITION, SUB_DIR):
                 #     arrow_onset_dev = sound_onset_dev
                 #     arrow_onset_psy = sound_onset_psy
                     
-            # response
+            # ---- response
             if CONDITION == "ATT" and not response_collected:
                 
                 response = read_button_press(device, myLog)
@@ -306,6 +312,6 @@ def run_ASSR(device, buttonCodes, myLog, monitor, MSR, SUB, CONDITION, SUB_DIR):
 
     txt_finished.draw()
     win.flip()
-    core.wait(3)
+    core.wait(1)
 
     win.close()

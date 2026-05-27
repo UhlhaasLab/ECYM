@@ -93,6 +93,8 @@ def flush_button_buffer(device, button_log):
         if not n:
             break
         device.din.readDinLog(button_log, n)
+
+        
             
 def cleanup_and_exit(device, win):
     """Proper cleanup before exiting."""

@@ -36,8 +36,7 @@ START_RUN = args.run
 HT = args.ht
 
 # ------------------------ PARADIGMS ---------------------------
-paradigms = [{"name": "ASSR", "runs": ["PAS", "ATT"]},
-            # "name": "ASSR", "runs": [1, 2]}, 
+paradigms = [{"name": "ASSR", "runs": [1, 2]}, # 1= PAS, 2 = ATT
              {"name": "EMOTION", "runs": [1, 2]}, #, 3, 4]}, 
              {"name": "MMN", "runs": [1, 2]}]
 

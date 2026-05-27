@@ -9,6 +9,13 @@ from pypixxlib import _libdpx as dp
 
 from utils.buttonsNew import enable_din_dout_passthrough_pixel_mode
 
+### iwie einfach am anfang 1="PAS", 2="ATT" machen?
+""" irgendwie so?
+if RUN == 1:
+    CONDITION = "PAS"
+elif RUN == 2:
+    CONDITION = "ATT"
+    """
 
 # -------------------------- PATHS -----------------------------
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))   # script location
@@ -274,7 +281,7 @@ def preload_stimuli(win, stimulipath, BASE_DIR, vpdevice, MSR, SUB, dB_SL):
 
         # load threshold & add gains
         BASE_DIR_up = Path(BASE_DIR).parent
-        BASE_DIR_up2 = Path(BASE_DIR_up).parent
+        BASE_DIR_up2 = Path(BASE_DIR_up).parent # adapt. still needed?
         csv_path  = os.path.join(BASE_DIR_up, "DATA", "HEARING THRESHOLD", SUB, "round_2_hearing_threshold_1000.csv")
         thr_info  = load_threshold_csv(csv_path)
         thr_lin   = thr_info["threshold_amplitude"]
