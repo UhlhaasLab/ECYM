@@ -5,111 +5,14 @@ from pathlib import Path
 from psychopy import visual, core, event, monitors, logging, sound
 
 from pypixxlib.datapixx import DATAPixx3
-
-
-
-MRS = 1     # 0=no, 1=yes
-
-
-# -------------------------- INITIALIZE VPIXX DEVICE --------------------------
-device = DATAPixx3()
-
-## PIXEL MODE
-device.dout.enablePixelModeGB() # enable once
-device.updateRegisterCache() 
-
-## BUTTONBOX
-# Initialize buttons
-if MRS == 0:
-    # Working codes in Lab maestro Simulator
-    buttonCodes = {65527:'blue', 65533:'yellow', 65534:'red', 65531:'green', 65519:'white', 65535:'button release'}
-    exitButton  = 'white'
-
-if MRS == 1:
-    # Button codes in MSR
-    buttonCodes = { 65528: 'blue', 65522: 'yellow', 65521: 'red', 65524: 'green', 65520: 'button release' }
-
-myLog = device.din.setDinLog(12e6, 1000) # uses the first 8 DIN slots for buttonbox
-device.din.startDinLog()
-device.updateRegisterCache()
-
-
-
-## MONITOR
-def stim_monitor():
-    if MRS == 0:
-        # "Laptop": {"width_cm": 34.5, "dist_cm": 40, "res_pix": [1920, 1080], "name": "Laptop", "refresh_rate": 60, "screen_idx": 0},
-        viewing_distance_cm 	= 40
-        monitor_width_cm    	= 34.5
-        monitor_size_pix    	= [1920, 1080] 
-        monitor_name        	= "Laptop"
-        refresh_rate        	= 60
-        screen_number           = 1 # 0 or 2 for this screen, 1 for external screen
-
-        # Set Monitor
-        monitor = monitors.Monitor(monitor_name) 
-        monitor.setWidth(monitor_width_cm)  
-        monitor.setDistance(viewing_distance_cm)  
-        monitor.setSizePix(monitor_size_pix)
-        monitor.save()
-
-        # Set monitor and return information
-        return {
-            "monitor_size_pix":     monitor_size_pix,
-            "monitor_name":         monitor_name,
-            "refresh_rate":         refresh_rate,
-            "viewing_distance_cm":  viewing_distance_cm,
-            "monitor_width_cm":     monitor_width_cm,
-            "screen_number":        screen_number
-        }
-
-    if MRS == 1:
-        # "OPM": {"width_cm": 78, "dist_cm": 122, "res_pix": [1920, 1080], "name": "OPM_Monitor", "refresh_rate": 120, "screen_idx": 2}
-
-        # Monitor/Experiment settings 
-        viewing_distance_cm 	= 122 # ADAPT -----------------?????????????
-        monitor_width_cm    	= 78
-        monitor_size_pix    	= [1920, 1080] 
-        monitor_name        	= "OPM_Monitor"
-        refresh_rate        	= 120
-        screen_number           = 2 # 01.22.2026
-
-        # Set Monitor
-        monitor = monitors.Monitor(monitor_name) 
-        monitor.setWidth(monitor_width_cm)  
-        monitor.setDistance(viewing_distance_cm)  
-        monitor.setSizePix(monitor_size_pix)
-        monitor.save()
-
-        # Set monitor and return information
-        return {
-            "monitor_size_pix":     monitor_size_pix,
-            "monitor_name":         monitor_name,
-            "refresh_rate":         refresh_rate,
-            "viewing_distance_cm":  viewing_distance_cm,
-            "monitor_width_cm":     monitor_width_cm,
-            "screen_number":        screen_number
-        }
-
+from utils.load import _load_wav_float32, load_threshold_csv, assign_subject_gains
 
 # -------------------------- AUDIO SETTINGS --------------------------
 FS = 48000 # audio sample rate. audio_sampling_frequency # chage to new one, 44000 i think
 
 AUDIO_BASE_ADDR = int(16e6) # adress in vpixx device (where the audio gets stored)
 
-## 1. LOAD AUDIO FILES AS FLOAT32 INTO VPixx AUDIO BUFFER
-#  needed for preload_tones one below (load .wav files as float32 as vpixx audio buffer expects that. also convert to mono if needed, and get the peak value for later gain calculations)
-def _load_wav_float32(audiofilespath):
-    # Load .wav tone files
-    audiofile, samplingfreq = sf.read(audiofilespath, dtype='float32')
-    if audiofile.ndim > 1:  # convert to mono if needed
-        audiofile   = audiofile.mean(axis=1).astype('float32')
-    # create array
-    audiofile = np.ascontiguousarray(audiofile, dtype=np.float32)
-    peak = float(np.max(np.abs(audiofile))) or 1.0 # get max value
-
-    return audiofile, int(samplingfreq), peak
-    
+## 1. LOAD AUDIO FILES AS FLOAT32 INTO VPixx AUDIO BUFFER    
 #  this actually loads them into buffer + creates registry for all samples 
 def preload_tones(vpdevice, paths):
     # preload tones into buffer
@@ -179,80 +82,12 @@ def preload_tones(vpdevice, paths):
         offset_samples += n_samples
     return reg
 
-
-## 2. MAKES VOLUME SAME FOR EACH PARTICIPANT
-#  just loads csv
-def load_threshold_csv(subjectpath):
-    # Load Subject-Specific Hearing Threshold
-    with open(subjectpath, "r", encoding="utf-8") as f:
-        reader = csv.DictReader(f, delimiter=',')                            # ADAPT this is either , or ; 
-        row = next(reader)
-    return {
-        "subject_id": row["subject_id"],
-        "threshold_db": float(row["threshold_db"]),
-        "threshold_amplitude": float(row["threshold_amplitude"]),
-        }
-
-#  then adds gains to regsitry
-def assign_subject_gains(in_audio_reg, threshold_linear, per_tone_dBSL, master=1.0):
-    # include gain in the register
-    for name, info in in_audio_reg.items():
-        peak            = info.get('peak', 1.0)
-        this_dBSL       = per_tone_dBSL.get(name)
-        gain            = master * threshold_linear * (10.0 ** (this_dBSL / 20.0)) / max(peak, 1e-12)
-        info['gain']    = float(max(0.0, min(1.0, gain)))  # clamp to [0,1]
-    return in_audio_reg
-
-"""
-def assign_subject_gains(in_audio_reg, threshold_linear, per_tone_dBSL, master=1.0):
-    for name, info in in_audio_reg.items():
-        peak = info.get('peak', 1.0)
-        this_dBSL = per_tone_dBSL.get(name)
-        
-        if this_dBSL is None:
-            raise ValueError(f"No dBSL defined for tone '{name}'")
-        
-        if peak is None:
-            raise ValueError("peak is None – audio not loaded or computed correctly")
-            
-        gain = master * threshold_linear * (10.0 ** (this_dBSL / 20.0)) / max(peak, 1e-12)
-        info['gain'] = float(max(0.0, min(1.0, gain)))
-
-    return in_audio_reg
-"""
-
 # --------------------------PRELOAD STIMULI AND TEXT ---------------
 # dB_SL=60 or 65 or 50
-def preload_stimuli(win, stimulipath, subjectpath, vpdevice, dB_SL):
+def preload_stimuli(win, stimulipath, subjectpath, vpdevice, MSR, dB_SL):
     fixation_angle = 1 # 0.5 # 0.5 looks good, maybe a bit too small? ----> ADAPT
 
-    if MRS == 0:
-        # ======= AUDITORY
-        FS = 48000 
-        HEARING_THRESHOLD = 0.0007
-
-        DB_ABOVE_THRESHOLD = 60
-        attenuation_factor = 10 ** (DB_ABOVE_THRESHOLD / 20)
-        SOUND_VOLUME = HEARING_THRESHOLD * attenuation_factor
-        SOUND_VOLUME = min(SOUND_VOLUME, 1.0)
-
-        if SOUND_VOLUME > 1.0:
-            print(f"WARNING: volume {SOUND_VOLUME:.2f} too high, capping at 1.0")
-            SOUND_VOLUME = 1.0
-        else:
-            print(f"Sound volume set to {SOUND_VOLUME:.4f}")
-
-        clicktrain_file = os.path.join(STIM_DIR, "clicktrain_40Hz_500ms.wav")
-        Audio = sound.Sound(str(clicktrain_file), sampleRate=FS, volume=SOUND_VOLUME)
-
-        # ======= VISUAL
-        fix_dot = visual.Circle(win, radius=fixation_angle/2, fillColor="black", lineColor="black", pos=(0, 0), units="deg")
-        arrow_vertices = [(-0.5, 0.8), (0.5, 0.0), (-0.5, -0.8)]
-        arrow_stim = visual.ShapeStim(win, vertices=arrow_vertices, closeShape=True, fillColor="black", lineColor="black")
-        
-        return {"Audio": Audio, "fix_dot": fix_dot, "arrow_stim": arrow_stim}
-    
-    if MRS == 1:
+    if MSR:
         # ======= AUDITORY
         # create tone registers
         audio_reg = preload_tones(vpdevice, {
@@ -269,25 +104,29 @@ def preload_stimuli(win, stimulipath, subjectpath, vpdevice, dB_SL):
         fix_dot = visual.Circle(win, radius=fixation_angle/2, fillColor="black", lineColor="black", pos=(0, 0), units="deg")
         arrow_vertices = [(-0.5, 0.8), (0.5, 0.0), (-0.5, -0.8)]
         arrow_stim = visual.ShapeStim(win, vertices=arrow_vertices, closeShape=True, fillColor="black", lineColor="black")
-        
-        return {"Audio": audio_reg, "fix_dot": fix_dot, "arrow_stim": arrow_stim}
-    
 
-# =================================================================
-# This block makes the script executable for one-time setup
-# =================================================================
-if __name__ == "__main__":
-    print("=====================================================")
-    print(f"RUNNING ONE-TIME SETUP FOR PARTICIPANT: {SUB}")
-    print("=====================================================")
-    # Ensure the subject's directory exists
-    os.makedirs(SUB_DIR, exist_ok=True)
-    # should check if the file exists already
-    if os.path.exists(os.path.join(SUB_DIR, f"{SUB}_ASSR_master_trial_sequence.csv")):
-        print(f"WARNING: Master sequence file for {SUB} already exists! No action taken.")
-        # does the script close anyway or do i need to close it with a line here?
-        # exit()
     else:
-        # Create the master sequence file using constants from the top of the script
-        create_participant_sequences(SUB_DIR, SUB, N_NO_ARROW, N_LEFT, N_RIGHT)
-        print(f"\nSetup complete. File created: {SUB}_ASSR_master_trial_sequence.csv. You can now run the ASSR_RUN paradigm script.")
+        # ======= AUDITORY
+        FS = 48000 
+        HEARING_THRESHOLD = 0.0007
+
+        DB_ABOVE_THRESHOLD = 60
+        attenuation_factor = 10 ** (DB_ABOVE_THRESHOLD / 20)
+        SOUND_VOLUME = HEARING_THRESHOLD * attenuation_factor
+        SOUND_VOLUME = min(SOUND_VOLUME, 1.0)
+
+        if SOUND_VOLUME > 1.0:
+            print(f"WARNING: volume {SOUND_VOLUME:.2f} too high, capping at 1.0")
+            SOUND_VOLUME = 1.0
+        else:
+            print(f"Sound volume set to {SOUND_VOLUME:.4f}")
+
+        clicktrain_file = os.path.join(stimulipath, "clicktrain_40Hz_500ms.wav")
+        Audio = sound.Sound(str(clicktrain_file), sampleRate=FS, volume=SOUND_VOLUME)
+
+        # ======= VISUAL
+        fix_dot = visual.Circle(win, radius=fixation_angle/2, fillColor="black", lineColor="black", pos=(0, 0), units="deg")
+        arrow_vertices = [(-0.5, 0.8), (0.5, 0.0), (-0.5, -0.8)]
+        arrow_stim = visual.ShapeStim(win, vertices=arrow_vertices, closeShape=True, fillColor="black", lineColor="black")
+        
+    return {"Audio": Audio, "fix_dot": fix_dot, "arrow_stim": arrow_stim}

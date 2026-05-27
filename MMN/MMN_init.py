@@ -5,6 +5,8 @@ import soundfile as sf
 
 from pathlib import Path
 
+from utils.load import load_threshold_csv, assign_subject_gains, _load_wav_float32
+
 # -------------------------- STIM PATH -----------------------------
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))   # script location
 STIM_DIR = os.path.join(BASE_DIR, "MMN-stimuli")
@@ -125,17 +127,6 @@ FS = 48000 # audio sample rate. audio_sampling_frequency # chage to new one, 440
 AUDIO_BASE_ADDR = int(16e6) # adress in vpixx device (where the audio gets stored)
 
 ## 1. LOAD AUDIO FILES AS FLOAT32 INTO VPixx AUDIO BUFFER
-#  needed for preload_tones one below (load .wav files as float32 as vpixx audio buffer expects that. also convert to mono if needed, and get the peak value for later gain calculations)
-def _load_wav_float32(audiofilespath):
-    # Load .wav tone files
-    audiofile, samplingfreq = sf.read(audiofilespath, dtype='float32')
-    if audiofile.ndim > 1:  # convert to mono if needed
-        audiofile = audiofile.mean(axis=1).astype('float32')
-    # create array
-    audiofile = np.ascontiguousarray(audiofile, dtype=np.float32)
-    peak = float(np.max(np.abs(audiofile))) or 1.0 # get max value
-
-    return audiofile, int(samplingfreq), peak
     
 #  this actually loads them into buffer + creates registry for all samples 
 def preload_tones(vpdevice, paths):
@@ -204,32 +195,6 @@ def preload_tones(vpdevice, paths):
         
         offset_samples += n_samples
     return reg
-
-
-## 2. MAKES VOLUME SAME FOR EACH PARTICIPANT
-#  just loads csv
-def load_threshold_csv(subjectpath):
-    # Load Subject-Specific Hearing Threshold
-    with open(subjectpath, "r", encoding="utf-8") as f:
-        #reader = csv.DictReader(f)
-        reader = csv.DictReader(f, delimiter=',')
-        row = next(reader)
-    return {
-        "subject_id": row["subject_id"],
-        "threshold_db": float(row["threshold_db"]),
-        "threshold_amplitude": float(row["threshold_amplitude"]),
-        }
-
-#  then adds gains to regsitry
-def assign_subject_gains(in_audio_reg, threshold_linear, per_tone_dBSL, master=1.0):
-    #include gain in the register
-    for name, info in in_audio_reg.items():
-        peak            = info.get('peak', 1.0)
-        this_dBSL       = per_tone_dBSL.get(name)
-        gain            = master * threshold_linear * (10.0 ** (this_dBSL / 20.0))
-        info['gain']    = float(max(0.0, min(1.0, gain)))  # clamp to [0,1]
-
-    return in_audio_reg
 
 # -------------------------- PRELOAD STIMULI AND TEXT ---------------
 # Reserve a thin strip at the left edge so the trigger pixel is not covered by movie content.

@@ -38,7 +38,7 @@ def run_ASSR(device, buttonCodes, myLog, monitor, MSR, SUB, CONDITION, SUB_DIR):
 
     win = visual.Window(
         monitor=monitor_settings['monitor_name'], size=monitor_settings['monitor_size_pix'], 
-        fullscr=True, # set fullscr to True in MSR
+        fullscr=MSR, # set fullscr to True in MSR
         units="deg", 
         #color=[212, 212, 212],
         color= [160, 160, 160], # slightly darker gray to increase contrast with trigger pixel
@@ -122,7 +122,8 @@ def run_ASSR(device, buttonCodes, myLog, monitor, MSR, SUB, CONDITION, SUB_DIR):
 
     flush_button_buffer(device, myLog)
     while True:
-        button, _ = read_button_press(device, myLog) # read VPixx buttonbox
+        device.updateRegisterCache()  
+        button, _ = read_button_press_fast(device, myLog, buttonCodes) # read VPixx buttonbox
         if button in ["red"]:
         #if event.getKeys(keyList=['r']): # for keyboard testing, psychopy
             break

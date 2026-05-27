@@ -22,6 +22,7 @@ from MMN.MMN_init import (STIM_DIR, SOA,
 from utils.pixel_mode           import trigger_to_RGB, draw_pixel
 from utils.buttons              import collect_response, flush_buttons
 from utils.escape_cleanup_abort import check_abort, cleanup
+from utils.load                 import load_trials
 
 
 def run_MMN(device, buttonCodes, myLog, monitor, MSR, SUB, RUN, SUB_DIR):
@@ -71,21 +72,8 @@ def run_MMN(device, buttonCodes, myLog, monitor, MSR, SUB, RUN, SUB_DIR):
     movie = stim["movie"]
 
     # -------------------- LOAD TRIALS --------------------
-    def load_trials():
-        sequence_file = os.path.join(SUB_DIR, f"{SUB}_MMN_run{RUN}_trial_sequence.csv")
-        if not os.path.exists(sequence_file):
-            raise FileNotFoundError(f"ERROR: Sequence file not found for {SUB}!")
-        with open(sequence_file, "r", encoding="utf-8") as f:
-            all_trials = list(csv.DictReader(f))
-
-        if not all_trials:
-            raise ValueError(f"Could not find any trials in sequence file for RUN {RUN}.")
-
-        print(f"Successfully loaded {len(all_trials)} trials (should be 640) for RUN {RUN}.")
-        return all_trials
-
-    trials = load_trials()
-    #!!!!!!!!!! only ten trials for testing, has to be removed for the whole paradigm !!!!!!!!!!
+    trials = load_trials("MMN", SUB_DIR, SUB, RUN)
+    #!!!!!!!!!! only 5 trials for testing, has to be removed for the whole paradigm !!!!!!!!!!
     trials = trials[:5]
 
     # ============================================================================================
@@ -98,7 +86,6 @@ def run_MMN(device, buttonCodes, myLog, monitor, MSR, SUB, RUN, SUB_DIR):
     while True:
         button, _ = collect_response(device, myLog, buttonCodes)
         if button in ["red", "green"]:
-        #if event.getKeys(keyList=['r','g','b']): # for keyboard testing: wait for any key press to start
             break
         if check_abort():
             core.quit()
@@ -118,11 +105,6 @@ def run_MMN(device, buttonCodes, myLog, monitor, MSR, SUB, RUN, SUB_DIR):
     for f in range(TRIG_FRAMES):
         draw_pixel(win, trigger_to_RGB(TRIG_RUN_START))
         win.flip()
-
-    # # debug
-    # print(f"TRIG START ON {TRIG_RUN_START}, RGB: {trigger_to_RGB(TRIG_RUN_START)}")
-    # print_trigger_info(device)
-    # print("")
 
     win.flip() # Movie continues + Trigger cleared
 
@@ -188,19 +170,8 @@ def run_MMN(device, buttonCodes, myLog, monitor, MSR, SUB, RUN, SUB_DIR):
                 sound_onset_dev = flip_marks.get("time_dev")
                 sound_onset_psy = flip_marks.get("time_psy")
 
-                # # debug only once per trial
-                # if trig_frame == TRIG_FRAMES - 1: # -1 is needed here because trig_frame starts at 0. so if TRIG_FRAMES=2, we want to print debug info at trig_frame=1, which is the last frame of the trigger presentation.
-                #     print(f"current_trig {current_trig}, RGB: {trigger_to_RGB(current_trig)}")
-                #     print_trigger_info(device)
-                #     print("")
-
             # clear trigger
             win.flip()
-
-            # # debug gray
-            # print(f"gray")
-            # print_trigger_info(device)
-            # print("")
 
             # -------- LOG ONCE PER TRIAL --------
             log_writer.writerow([

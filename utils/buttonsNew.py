@@ -22,9 +22,6 @@ def stopButtons(startAndStopButtons):
         if state  in startAndStopButtons:
             return state
 
-
-
-
 # use this button press function
 def read_button_press(device, button_log):
     """
@@ -33,13 +30,14 @@ def read_button_press(device, button_log):
         tuple: (button_name, timestamp) or (None, None) if no button pressed
     """
     BUTTON_CODES_ALL = { 65528: 'blue', 65522: 'yellow', 65521: 'red', 65524: 'green', 65520: 'button release' } # ADAPT
-
+    print(device)
     if device is None:
         return None, None
     try:
         # device.updateRegisterCache()
         device.din.getDinLogStatus(button_log)
         new_events = button_log["newLogFrames"]
+        print(new_events)
         if new_events > 0:
             event_list = device.din.readDinLog(button_log, new_events)
             for timestamp, code in event_list:
@@ -51,11 +49,6 @@ def read_button_press(device, button_log):
     except Exception as e:
         print(f"Error reading button: {e}")
     return None, None
-
-
-
-
-
 
 # here the new version, need to test it in headscan:
 def read_button_press_old(device, button_log):
@@ -74,18 +67,10 @@ def read_button_press_old(device, button_log):
     except Exception as e:
         print(f"button read error: {e}")
     return None, None
-    
-    
-    
-    
-    
-    
-    
 
 def read_button_press_fast(device, button_log, valid_buttons):
     device.din.getDinLogStatus(button_log)
     n = button_log["newLogFrames"]
-    
     if not n:
         return None, None
 

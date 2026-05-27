@@ -4,7 +4,7 @@
     "monitor_size_pix":     [1440, 900],
     "monitor_name":         "Laptop",
     "refresh_rate":         60,
-    "screen_number":        1
+    "screen_number":        0
  },
 
  "buttons": {

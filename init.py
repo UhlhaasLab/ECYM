@@ -5,6 +5,8 @@ from psychopy import monitors
 
 from pypixxlib.datapixx import DATAPixx3
 
+from utils.buttonsNew import enable_din_dout_passthrough_pixel_mode
+
 # -------------------------- INITIALIZE VPIXX DEVICE --------------------------
 def button_box(config):
     device = DATAPixx3()
@@ -40,5 +42,5 @@ def stim_monitor(config):
     monitor.save()
 
 
-    # Set monitor and return information
+    # Set monitor and return information 
     return monitor_config
