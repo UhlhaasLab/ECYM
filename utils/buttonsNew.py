@@ -73,14 +73,11 @@ def read_button_press_fast(device, button_log, valid_buttons):
     n = button_log["newLogFrames"]
     if not n:
         return None, None
-
     events = device.din.readDinLog(button_log, n)
-
     for ts, code in events:
         name = valid_buttons.get(code)
         if name:
             return name, ts
-
     return None, None
 
 
@@ -145,4 +142,61 @@ def enable_din_dout_passthrough_pixel_mode():
     dp.DPxEnableDoutButtonSchedules()
     dp.DPxSetDoutButtonSchedulesMode(dout_button_schedules_mode)
     dp.DPxWriteRegCache()
+ 
+
+
+
+
+
+"""# ERFAN EXAMPLE
+
+device.updateRegisterCache()
+din.getDinLogStatus(myLog)
+
+n = myLog["newLogFrames"]
+events = din.readDinLog(myLog, n)
+
+t=0
+for ts, code in events:
+    name = VALID_BUTTONS.get(code)
+    #check the current ts vs last ts to make sure it's within the response window (arrow duration + jitter)
+    if name in {'red', 'green' }:
+        if ts-flip_marks['t0_dev'] > 2.1*(t+1):
+            missed = int((ts - flip_marks['t0_dev']) // 2.1) - t  # Update t to the current trial number based on time elapsed
+            print(f"Missed {missed} trial(s) ")          
+            t += missed  # Skip missed trials  
+            total_trials += missed  # Count missed trials in total trials    
+        if name == correct_key[t]:  # Check if the button press matches the correct key for the trial
+            print(f"Target {t}: {name} Correct")
+            correct_responses += 1            
+        else:
+            print(f"Target {t}: {name} Incorrect")
+        total_trials += 1
+        with open(datafile_path, 'a', newline='') as f:
+            writer = csv.writer(f)
+            writer.writerow([
+                run_num,      # run
+                total_trials,      # trial
+                trialids[t],    # trialtype (shows 0,1,2,3)
+                trialtype_string[t],  # trialtype_string (shows left_incg, right_cong, etc.)
+                cuetype_val,    # cuetype (shows 0 or 1)
+                cuetype_string, # cuetype_string (shows incg or cong)
+                correct_key[t],    # correct answer
+                name,    # key_pressed
+            ])
+
+        t += 1
+
+if group_size-t-1:
+    total_trials += (group_size-t)  # Count remaining trials in the mini-block as missed if no response was made for them
+
+# Count missed trials at the end of the mini-block
+# Calculate and display accuracy
+if total_trials > 0:
+    accuracy_percentage = (correct_responses / total_trials) * 100
+else:
+    accuracy_percentage = 0
+""" 
+ 
+ 
  

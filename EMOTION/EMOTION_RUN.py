@@ -312,3 +312,179 @@ def run_EMOTION(device, buttonCodes, myLog, monitor, MSR, SUB, RUN, GROUP, SUB_D
     # cleanup(device, win)
     win.close()
     #core.quit()
+
+
+
+
+
+
+from psychopy import visual, core, event
+import csv, time, os, random
+
+from EMOTION.EMOTION_init import (# triggers
+                         TRIG_START, TRIG_END, TRIG_RESP_right, TRIG_RESP_left, 
+                         trigger_map,                     
+                         # preload
+                         preload_stimuli, preload_txt)
+
+from utils.pixel_mode           import trigger_to_RGB, draw_pixel, print_trigger_info
+from utils.buttons              import collect_response, flush_buttons
+from utils.buttonsNew           import read_button_press, flush_button_buffer, cleanup_and_exit, read_button_press_fast
+from utils.escape_cleanup_abort import check_abort, cleanup
+
+
+def run_EMOTION(device, buttonCodes, myLog, monitor, MSR, SUB, RUN, GROUP, SUB_DIR):
+    # -------------------- GENERAL --------------------
+    timestamp = time.strftime('%Y%m%d_%H%M%S')
+    psychopy_clock = core.Clock()
+    rt_clock = core.Clock()
+    # -------------------- WINDOW --------------------
+    monitor_settings = monitor
+    win = visual.Window(
+        monitor=monitor_settings['monitor_name'], size=monitor_settings['monitor_size_pix'], 
+        fullscr=MSR, 
+        units="deg", 
+        color= [160, 160, 160],
+        colorSpace='rgb255', 
+        screen=monitor_settings["screen_number"]
+    )
+    win.mouseVisible = False
+    # -------------------- TIMING SETUP --------------------
+    monitor_rr = monitor_settings["refresh_rate"]
+    frameDur = 1.0 / monitor_rr 
+    TRIG_FRAMES = 2 
+
+    """
+    Face:            0 → 0.10 s
+    Fixation:        0.10 → jittered 1.25 - 1.75
+    Response window: 0.2 → 1.0 s
+    """
+    face_dur = 0.100  # before it was 0.250
+    face_frames = int(round(face_dur / frameDur))
+    resp_open_s  = 0.200 # also change?
+    resp_close_s = 1.000
+    # -------------------- LOGGING SETUP --------------------
+    log_file = os.path.join(SUB_DIR, f"{SUB}_group-{GROUP}_run-{RUN}_data_{timestamp}.csv")
+    log_f = open(log_file, "w", newline="", encoding="utf-8")
+    log_writer = csv.writer(log_f)
+    log_writer.writerow([
+        "run", "trial_index", "face", "face_onset_psy", "face_onset_dev", 
+        "correct_key", "response_key", "is_resp_corr", "rt_psy", "rt_dev"])
+    # -------------------- PRELOAD TEXT & STIMULI --------------------
+    txt_dict = preload_txt(win)
+    txt_finished = txt_dict["txt_finished"]
+    if GROUP == 'A': instr = txt_dict["txt_intro_A"]
+    else: instr = txt_dict["txt_intro_B"] # GROUP 'B'
+
+    stim = preload_stimuli(win) # preload_stim retungs stim_dict, which contains: "fixation", "WNA", "WSA", etc. as keys, and the corresponding ImageStim objects as values
+    fix = stim["fixation"]
+
+    # -------------------- TRIAL LOADING --------------------
+    def load_run_trials():
+        sequence_file = os.path.join(SUB_DIR, f"{SUB}_group-{GROUP}_run-{RUN}_EMO_trial_sequence.csv")
+
+        if not os.path.exists(sequence_file):
+            raise FileNotFoundError(
+                f"\n\ERROR: Trial sequence file not found for participant {SUB}!\n"
+                f"Please run the 'EMO_init.py' script first to generate it.\n"
+                f"Expected file path: {sequence_file}\n"
+            )
+
+        with open(sequence_file, "r", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            all_trials = list(reader)
+
+        current_run_trials = [t for t in all_trials if int(t['run']) == RUN]
+        
+        if not current_run_trials:
+            raise ValueError(f"Could not find any trials for RUN {RUN} in the sequence file.")
+            
+        print(f"Successfully loaded {len(current_run_trials)} trials for RUN {RUN}.")
+        return current_run_trials
+
+    trials = load_run_trials()
+
+    # RESPONSE MAPPING
+    if GROUP == 'A':
+        correct_map = {'W': 'red', 'M': 'green'}
+    else:
+        correct_map = {'W': 'green', 'M': 'red'}
+
+    # -------------------- MAIN LOOP --------------------
+    for trial_data in trials:
+        check_abort()
+        fix_dur = random.uniform(1.25, 1.75)   
+        fix_frames  = int(round(fix_dur / frameDur))
+        total_frames = face_frames + fix_frames
+        response_key = None
+        rt_dev, rt_psy = "NaN", "NaN"
+        response_collected = False
+        face_onset_dev, face_onset_psy = None, None
+        flip_marks = {} 
+        # prepare stimulus (face + trigger, and response)
+        stim_face = stim[trial_data["face"]]
+        face_trig = trigger_map[trial_data["face"]]
+        correct_key = correct_map[trial_data["face"][0]]  # 'W' or 'M'
+        flush_buttons(device, myLog)
+
+        # This inner loop draws every frame for one complete trial (face + fixation)    
+        for frameN in range(total_frames):
+            if frameN < face_frames:
+                stim_face.draw()
+                # Draw the initial event trigger for the first few frames
+                if frameN < TRIG_FRAMES:
+                    draw_pixel(win, trigger_to_RGB(face_trig))
+            else:
+                fix.draw()
+
+            if frameN == 0: 
+                win.callOnFlip(lambda: flip_marks.update({
+                        "t_face_dev": device.getTime(),
+                        "t_face_psy": psychopy_clock.getTime()}))
+
+            win.flip() 
+            if frameN == 0:
+                face_onset_dev = flip_marks.get("t_face_dev")
+                face_onset_psy = flip_marks.get("t_face_psy")
+
+                
+            # RESPONSE COLLECTION 
+            if face_onset_dev is not None and not response_collected:
+
+                # should i call updateregcache here? yes else it does not update times of device, i get onlz nan
+                device.updateRegisterCache()
+                t_dev_now = device.getTime()
+
+                # within response window (200–1000 ms)
+                if face_onset_dev + resp_open_s <= t_dev_now <= face_onset_dev + resp_close_s:
+                    button_pressed, t_dev_pressed = collect_response(device, myLog, buttonCodes)
+                    # ADAPT use new button code!!!!!!!!!!
+                    t_psy_pressed = psychopy_clock.getTime()
+
+                    if button_pressed is not None:
+                        response_collected = True
+                        response_key = button_pressed
+
+                        rt_dev = t_dev_pressed - face_onset_dev
+                        rt_psy = t_psy_pressed - face_onset_psy
+
+        is_resp_corr = int(response_key == correct_key) if response_key is not None else 0
+
+        log_writer.writerow([
+            RUN,
+            trial_data["trial_index"],
+            trial_data["face"],
+            face_onset_psy,
+            face_onset_dev,
+            correct_key,
+            response_key if response_key is not None else "NaN",
+            is_resp_corr,
+            rt_psy,
+            rt_dev
+        ])
+        log_f.flush()
+
+    log_f.close()
+    win.flip()
+    core.wait(3)
+    win.close()

@@ -62,7 +62,8 @@ def run_ASSR(device, buttonCodes, myLog, monitor, MSR, SUB, CONDITION, SUB_DIR):
     log_f = open(log_file, "w", newline="", encoding="utf-8")
     log_writer = csv.writer(log_f)
     log_writer.writerow(["trial_index","arrow","sound_onset_psy","sound_onset_dev",
-                        "arrow_onset_psy","arrow_onset_dev","response_key","rt_psy","rt_dev"])
+                        #"arrow_onset_psy","arrow_onset_dev",
+                        "response_key","rt_psy","rt_dev"])
 
     # -------------------- PRELOAD TEXT & STIMULI --------------------
     txt_dict = preload_txt(win)
@@ -182,8 +183,8 @@ def run_ASSR(device, buttonCodes, myLog, monitor, MSR, SUB, CONDITION, SUB_DIR):
         # ---------- onset timestamps
         sound_onset_dev = None
         sound_onset_psy = None
-        arrow_onset_dev = None
-        arrow_onset_psy = None
+        #arrow_onset_dev = None
+        #arrow_onset_psy = None
             
         infoaud_fb = audio_reg['clicktrain']
         device.audio.stopSchedule()
@@ -244,9 +245,9 @@ def run_ASSR(device, buttonCodes, myLog, monitor, MSR, SUB, CONDITION, SUB_DIR):
                 sound_onset_dev = flip_marks["dev"]
                 sound_onset_psy = flip_marks["psy"]
                 
-                if trial["arrow"] != "none":
-                    arrow_onset_dev = sound_onset_dev
-                    arrow_onset_psy = sound_onset_psy
+                # if trial["arrow"] != "none":
+                #     arrow_onset_dev = sound_onset_dev
+                #     arrow_onset_psy = sound_onset_psy
                     
             # response
             if CONDITION == "ATT" and not response_collected:
@@ -279,8 +280,7 @@ def run_ASSR(device, buttonCodes, myLog, monitor, MSR, SUB, CONDITION, SUB_DIR):
             trial["arrow"],
             sound_onset_psy,
             sound_onset_dev,
-            arrow_onset_psy,
-            arrow_onset_dev,
+            # arrow_onset_psy, arrow_onset_dev,
             response_key,
             rt_psy,
             rt_dev
