@@ -78,9 +78,9 @@ device, buttonCodes, myLog = button_box(config)
 if HT:
     SUB_DIR = os.path.join(DATA_DIR, "HEARING THRESHOLD", SUB)
     os.makedirs(SUB_DIR, exist_ok=True)
+    print("Measuring Hearing Threshold.")
     run_hearing_threshold(device, buttonCodes, myLog, SUB, SUB_DIR)
-    print("Measure Hearing Threshold.")
-    input_to_continue(paradigm["name"], 0, SUB)
+    input_to_continue("Hearing Threshold", 0, SUB)
 
 # ----------------------- RUN ASSR ----------------------------
 paradigm = next(p for p in paradigms if p["name"] == "ASSR")
