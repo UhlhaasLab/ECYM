@@ -77,6 +77,7 @@ device, buttonCodes, myLog = button_box(config)
 # ----------------- RUN HEARING THRESHOLD ----------------------
 if HT:
     SUB_DIR = os.path.join(DATA_DIR, "HEARING THRESHOLD", SUB)
+    os.makedirs(SUB_DIR, exist_ok=True)
     run_hearing_threshold(device, buttonCodes, myLog, SUB, SUB_DIR)
     print("Measure Hearing Threshold.")
     input_to_continue(paradigm["name"], 0, SUB)

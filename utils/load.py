@@ -24,7 +24,7 @@ def load_threshold_csv(subjectpath):
         reader = csv.DictReader(f, delimiter=',')
         row = next(reader)
     return {
-        "subject_id": row["subject_id"],
+        "subject_id": row["SUB"],
         "threshold_db": float(row["threshold_db"]),
         "threshold_amplitude": float(row["threshold_amplitude"]),
         }
