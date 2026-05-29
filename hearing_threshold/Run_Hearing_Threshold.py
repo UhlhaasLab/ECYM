@@ -1,23 +1,16 @@
-import sys
-import soundfile as sf
 import csv
-import argparse
 import os
 import numpy as np
 from psychopy import visual, event, core
 
-from pathlib import Path
-
 from utils.escape_cleanup_abort import escape_check
-from utils.buttons import collect_response, flush_buttons
+from utils.buttons import collect_response, flush_vpixx_events
 
 from utils.load import _load_wav_float32
 
 
 def run_hearing_threshold(device, buttonCodes, myLog, SUB, SUB_DIR):
     audio_sampling_frequency    = 44100 # from darios script
-
-    #SUB  = 'TEST_05.12'
 
     # Load test tone 1kHz
     script_folder = os.path.dirname(os.path.abspath(__file__))

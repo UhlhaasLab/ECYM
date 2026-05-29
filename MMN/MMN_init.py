@@ -200,7 +200,7 @@ def preload_tones(vpdevice, paths):
 # Reserve a thin strip at the left edge so the trigger pixel is not covered by movie content.
 movie_size_adjuster = 3 # eg 3 = make movie 1/3 of the screen size
 
-def preload_stimuli(win, stimulipath, subjectpath, vpdevice, current_run, MSR, SUB, dB_SL=35):
+def preload_stimuli(win, stimulipath, subjectpath, vpdevice, current_run, MSR, SUB):
 
     if MSR:
         # ======= AUDITORY

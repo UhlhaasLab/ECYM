@@ -30,3 +30,13 @@ def flush_buttons(device, buttonLog):
             break
         device.din.readDinLog(buttonLog, n)
     print("buttonpress flushed")
+
+def flush_vpixx_events(vpdevice, myLog_collect):
+    # clear responses
+    while True:
+        vpdevice.updateRegisterCache()
+        vpdevice.din.getDinLogStatus(myLog_collect)
+        n = myLog_collect.get("newLogFrames", 0)
+        if not n:
+            break
+        vpdevice.din.readDinLog(myLog_collect, n)

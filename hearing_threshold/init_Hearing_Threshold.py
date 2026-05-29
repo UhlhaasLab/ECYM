@@ -1,10 +1,7 @@
-import os, csv, random, ctypes
+import os
 import numpy as np
-import soundfile as sf
-from pathlib import Path
-from psychopy import visual, core, event, monitors, logging, sound
+from psychopy import visual, sound
 
-from pypixxlib.datapixx import DATAPixx3
 from utils.load import _load_wav_float32, load_threshold_csv, assign_subject_gains
 
 # -------------------------- AUDIO SETTINGS --------------------------

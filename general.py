@@ -1,8 +1,4 @@
-import sys
-# sys.path.insert(0, '/Users/mathilde/Library/Python/3.10/lib/python/site-packages')
-sys.path.insert(0, r"C:\Program Files\PsychoPy\Lib\site-packages")
-
-import os, json
+import os, json, sys
 import importlib.util
 import argparse
 

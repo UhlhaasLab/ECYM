@@ -31,13 +31,19 @@ def load_threshold_csv(subjectpath):
 
 #  then adds gains to regsitry
 def assign_subject_gains(in_audio_reg, threshold_linear, per_tone_dBSL, master=1.0):
-    #include gain in the register
+    # include gain in the register
     for name, info in in_audio_reg.items():
         peak            = info.get('peak', 1.0)
         this_dBSL       = per_tone_dBSL.get(name)
-        gain            = master * threshold_linear * (10.0 ** (this_dBSL / 20.0))
+        
+        if this_dBSL is None:
+            raise ValueError(f"No dBSL defined for tone '{name}'")
+            
+        if peak is None:
+            raise ValueError("peak is None – audio not loaded or computed correctly")
+            
+        gain            = master * threshold_linear * (10.0 ** (this_dBSL / 20.0)) / max(peak, 1e-12)
         info['gain']    = float(max(0.0, min(1.0, gain)))  # clamp to [0,1]
-
     return in_audio_reg
 
 def load_trials(paradigm_name, SUB_DIR, SUB, RUN):
