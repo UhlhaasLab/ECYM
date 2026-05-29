@@ -73,7 +73,7 @@ def run_ASSR(device, buttonCodes, myLog, monitor, MSR, SUB, CONDITION, SUB_DIR):
     instr = txt_dict["txt_intro_PAS"] if CONDITION == "PAS" else txt_dict["txt_intro_ATT"]
     txt_finished = txt_dict["txt_finished"]
 
-    stim = preload_stimuli(win, STIM_DIR, BASE_DIR, device, MSR, SUB, dB_SL=55) # adapt. check db_sl !!!!!!!!!!!!!
+    stim = preload_stimuli(win, STIM_DIR, BASE_DIR, device, MSR, SUB, dB_SL=55) # adapt. 55 works but need to see which db SL is best!!!!
 
     # audio
     audio_reg = stim["Audio"]
@@ -223,9 +223,8 @@ def run_ASSR(device, buttonCodes, myLog, monitor, MSR, SUB, CONDITION, SUB_DIR):
                 
                 win.callOnFlip(lambda: device.audio.startSchedule()) # audio for device, alternative syntax
                 win.callOnFlip(lambda: device.updateRegisterCache()) # check with dario if this is needed
-                # win.callOnFlip(lambda: device.updateRegCacheAfterVideoSync()) # make sure audio starts right after video sync
-                # check/adapt if i need these regcache?!
-                
+                # win.callOnFlip(lambda: device.updateRegCacheAfterVideoSync()) # IS THIS LINE NEEDED?
+                                
                 win.callOnFlip(lambda: flip_marks.update({
                     "dev": device.getTime(),
                     "psy": psychopy_clock.getTime()
@@ -263,8 +262,8 @@ def run_ASSR(device, buttonCodes, myLog, monitor, MSR, SUB, CONDITION, SUB_DIR):
                 response = read_button_press(device, myLog)
                 
                 if response is not None:
-                    device.updateRegisterCache()
-                    
+                    device.updateRegisterCache() # is this needed here?
+
                     button_pressed, t_dev_pressed = response
                     t_psy_pressed = psychopy_clock.getTime()
                     
