@@ -28,6 +28,10 @@ from utils.escape_cleanup_abort import check_abort, cleanup
 
 
 def run_ASSR(device, buttonCodes, myLog, monitor, MSR, SUB, CONDITION, SUB_DIR):
+    if CONDITION == 1:
+        CONDITION = "PAS"
+    else:
+        CONDITION = "ATT"
     # -------------------- GENERAL --------------------
     timestamp = time.strftime('%Y%m%d_%H%M%S')
     psychopy_clock = core.Clock()
@@ -88,7 +92,7 @@ def run_ASSR(device, buttonCodes, myLog, monitor, MSR, SUB, CONDITION, SUB_DIR):
         return trials
 
     trials = load_trials()
-    trials = trials[:15] # ADAPT to full lenght 
+    # trials = trials[:15] # ADAPT to full lenght 
 
     # ---------------- PRECOMPUTE ONCE ----------------
     arrow_frames = round(ARROW_DUR / frameDur)

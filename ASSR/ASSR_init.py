@@ -7,15 +7,7 @@ from psychopy import visual, core, event, monitors, logging, sound
 from pypixxlib.datapixx import DATAPixx3
 from pypixxlib import _libdpx as dp
 
-from utils.buttonsNew import enable_din_dout_passthrough_pixel_mode
-
-### iwie einfach am anfang 1="PAS", 2="ATT" machen?
-""" irgendwie so?
-if RUN == 1:
-    CONDITION = "PAS"
-elif RUN == 2:
-    CONDITION = "ATT"
-    """
+# from utils.buttonsNew import enable_din_dout_passthrough_pixel_mode
 
 # -------------------------- PATHS -----------------------------
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))   # script location
@@ -227,7 +219,7 @@ def load_threshold_csv(csv_file):
         reader = csv.DictReader(f, delimiter=',')                            # ADAPT this is either , or ; 
         row = next(reader)
     return {
-        "subject_id": row["subject_id"],
+        "subject_id": row["SUB"],
         "threshold_db": float(row["threshold_db"]),
         "threshold_amplitude": float(row["threshold_amplitude"]),
         }
@@ -249,23 +241,6 @@ def assign_subject_gains(in_audio_reg, threshold_linear, per_tone_dBSL, master=1
         info['gain']    = float(max(0.0, min(1.0, gain)))  # clamp to [0,1]
     return in_audio_reg
 
-"""
-def assign_subject_gains(in_audio_reg, threshold_linear, per_tone_dBSL, master=1.0):
-    for name, info in in_audio_reg.items():
-        peak = info.get('peak', 1.0)
-        this_dBSL = per_tone_dBSL.get(name)
-        
-        if this_dBSL is None:
-            raise ValueError(f"No dBSL defined for tone '{name}'")
-        
-        if peak is None:
-            raise ValueError("peak is None – audio not loaded or computed correctly")
-            
-        gain = master * threshold_linear * (10.0 ** (this_dBSL / 20.0)) / max(peak, 1e-12)
-        info['gain'] = float(max(0.0, min(1.0, gain)))
-
-    return in_audio_reg
-"""
 
 # --------------------------PRELOAD STIMULI AND TEXT ---------------
 # dB_SL=60 or 65 or 50
